@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kosher Beer Co.</title>
+<link rel="stylesheet" href="_ds/modernist-5f50b7ed-4d9e-4b37-8f1e-dec5f75a8726/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&amp;display=swap">
+<script src="_ds/modernist-5f50b7ed-4d9e-4b37-8f1e-dec5f75a8726/_ds_bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+<script src="kbc-data.js"></script>
+<style>
+:root{--color-bg:#FAF9F6;--color-surface:#F1EEE8;--color-text:#183153;--color-accent:#C94B40;--color-divider:rgba(24,49,83,.32);--color-accent-100:#FBEDEB;--color-accent-600:#B13F35;--color-accent-700:#96342C;--color-accent-800:#6E251F;--font-heading:"Archivo",system-ui,sans-serif;--font-body:"Archivo",system-ui,sans-serif}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#FAF9F6;color:#183153;font-family:"Archivo",system-ui,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:#183153}
+a:hover{color:#C94B40}
+button,input,select{font-family:inherit}
+input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#FAF9F6;color:#183153">
+<a href="#main" style="position:absolute;left:-9999px;top:8px;background:#183153;color:#FAF9F6;padding:8px 12px;z-index:100" style-focus="left:8px">Skip to content</a>
+
+<header style="position:sticky;top:0;z-index:40;background:#FAF9F6;border-bottom:2px solid #183153">
+  <div style="max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,40px);height:64px;display:flex;align-items:center;gap:28px">
+    <a href="#/explore" aria-label="Kosher Beer Co. — home" style="display:flex;align-items:baseline;gap:6px;text-decoration:none;color:#183153;margin-right:auto;white-space:nowrap">
+      <span style="font-weight:800;font-size:19px;letter-spacing:-0.01em;font-stretch:118%;text-transform:uppercase">Kosher Craft Beer<br></span>
+      <span style="font-weight:600;font-size:12px;letter-spacing:0.14em;color:#C94B40;text-transform:uppercase">Co.</span>
+    </a>
+    <sc-if value="{{ navWide }}" hint-placeholder-val="{{ true }}">
+      <nav aria-label="Main" style="display:flex;gap:28px;height:64px">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+          <a href="{{ n.href }}" aria-current="{{ n.current }}" style="display:flex;align-items:center;font-size:15px;font-weight:500;text-decoration:none;color:#183153;border-bottom:3px solid {{ n.line }};margin-bottom:-2px;padding-top:3px;white-space:nowrap" style-hover="color:#C94B40">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <button type="button" onClick="{{ openCart }}" aria-label="{{ cartAria }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 4px;border:0;background:transparent;color:#183153;cursor:pointer;font-size:15px;font-weight:600" style-hover="color:#C94B40">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+      <span>Cart</span>
+      <sc-if value="{{ cartCount }}" hint-placeholder-val="{{ false }}">
+        <span style="min-width:22px;height:22px;padding:0 6px;background:#183153;color:#FAF9F6;font-size:12px;font-weight:700;display:grid;place-items:center;font-variant-numeric:tabular-nums">{{ cartCount }}</span>
+      </sc-if>
+    </button>
+    <sc-if value="{{ navNarrow }}" hint-placeholder-val="{{ false }}">
+      <button type="button" onClick="{{ toggleMenu }}" aria-expanded="{{ menuOpen }}" aria-label="Menu" style="width:44px;height:44px;margin-right:-10px;border:0;background:transparent;color:#183153;display:grid;place-items:center;cursor:pointer">
+        <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </sc-if>
+        <sc-if value="{{ menuClosed }}" hint-placeholder-val="{{ true }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </sc-if>
+      </button>
+    </sc-if>
+  </div>
+</header>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;top:66px;left:0;right:0;bottom:0;z-index:39;background:#FAF9F6;overflow:auto">
+    <nav aria-label="Main" style="padding:8px clamp(16px,4vw,40px) 32px;display:flex;flex-direction:column">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+        <a href="{{ n.href }}" aria-current="{{ n.current }}" style="display:flex;align-items:center;justify-content:space-between;min-height:64px;border-bottom:1px solid rgba(24,49,83,.16);font-size:22px;font-weight:700;text-decoration:none;color:{{ n.color }}">{{ n.label }}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
+      </sc-for>
+    </nav>
+  </div>
+</sc-if>
+
+<main id="main" style="flex:1;width:100%">
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1240px;margin:0 auto;padding:64px clamp(16px,4vw,40px);color:#556580">Loading the catalog…</div>
+</sc-if>
+
+<!-- ========== EXPLORE ========== -->
+<sc-if value="{{ isExplore }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(16px,4vw,40px) 72px">
+    <section aria-labelledby="explore-h" style="max-width:820px">
+      <p style="margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#A63B31">Explore beers</p>
+      <h1 id="explore-h" style="margin:0 0 20px;font-size:clamp(30px,4.4vw,46px);font-weight:800;line-height:1.05;letter-spacing:-0.02em;font-stretch:108%;text-wrap:balance">Find a kosher beer you'll enjoy.</h1>
+      <form role="search" onSubmit="{{ submitSearch }}" style="display:flex;align-items:stretch;border:2px solid #183153;background:#FFFFFF;height:60px">
+        <label for="q" style="display:grid;place-items:center;width:52px;flex:none;color:#183153">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          <span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search beers</span>
+        </label>
+        <input id="q" ref="{{ qRef }}" type="search" enterKeyHint="search" autoComplete="off" spellCheck="false" value="{{ q }}" onChange="{{ onQ }}" placeholder="{{ placeholder }}" style="flex:1;min-width:0;border:0;outline:none;background:transparent;font-size:18px;color:#183153;padding:0">
+        <sc-if value="{{ hasQ }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ clearQ }}" aria-label="Clear search" style="width:48px;flex:none;border:0;background:transparent;color:#556580;display:grid;place-items:center;cursor:pointer" style-hover="color:#183153">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+        </sc-if>
+        <sc-if value="{{ searchBtn }}" hint-placeholder-val="{{ true }}">
+          <button type="submit" class="btn btn-primary" style="border-radius:0;padding:0 24px;font-size:15px">Search</button>
+        </sc-if>
+      </form>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;align-items:center">
+        <div style="position:relative">
+          <select aria-label="Style" value="{{ styleSel }}" onChange="{{ onStyleSel }}" style="appearance:none;-webkit-appearance:none;height:44px;padding:0 38px 0 14px;border:1px solid {{ styleSelBd }};background:transparent;color:#183153;font-size:15px;cursor:pointer;border-radius:0">
+            <option value="">All styles</option>
+            <option value="__multi" disabled="disabled">Several styles</option>
+            <sc-for list="{{ styles }}" as="s" hint-placeholder-count="0"><option value="{{ s }}">{{ s }}</option></sc-for>
+          </select>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="position:absolute;right:12px;top:14px;pointer-events:none"><path d="m6 9 6 6 6-6"></path></svg>
+        </div>
+        <div style="position:relative">
+          <select aria-label="Alcohol content" value="{{ abvSel }}" onChange="{{ onAbvSel }}" style="appearance:none;-webkit-appearance:none;height:44px;padding:0 38px 0 14px;border:1px solid {{ abvSelBd }};background:transparent;color:#183153;font-size:15px;cursor:pointer;border-radius:0">
+            <option value="">Any ABV</option>
+            <option value="low">Light, under 5%</option>
+            <option value="medium">Medium, 5–7%</option>
+            <option value="strong">Strong, 7%+</option>
+            <option value="custom" disabled="disabled">Custom range</option>
+          </select>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="position:absolute;right:12px;top:14px;pointer-events:none"><path d="m6 9 6 6 6-6"></path></svg>
+        </div>
+        <button type="button" onClick="{{ openFilters }}" style="height:44px;padding:0 16px;display:flex;align-items:center;gap:8px;border:1px solid #183153;background:{{ filterBtnBg }};color:{{ filterBtnFg }};font-size:15px;font-weight:600;cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg>
+          {{ filterBtnLabel }}
+        </button>
+      </div>
+      <sc-if value="{{ hasChips }}" hint-placeholder-val="{{ false }}">
+        <div aria-label="Active filters" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center">
+          <sc-for list="{{ activeChips }}" as="c" hint-placeholder-count="0">
+            <button type="button" onClick="{{ c.remove }}" aria-label="Remove filter {{ c.label }}" style="height:34px;padding:0 8px 0 12px;display:flex;align-items:center;gap:6px;border:0;background:#E8ECF2;color:#183153;font-size:14px;cursor:pointer" style-hover="background:#DCE2EA">{{ c.label }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+          </sc-for>
+          <button type="button" onClick="{{ clearAll }}" style="height:34px;padding:0 6px;border:0;background:transparent;color:#A63B31;font-size:14px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Clear all</button>
+        </div>
+      </sc-if>
+    </section>
+
+    <sc-if value="{{ showRecs }}" hint-placeholder-val="{{ true }}">
+      <section aria-labelledby="rec-h" style="margin-top:clamp(36px,5vw,56px)">
+        <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;margin-bottom:16px">
+          <div>
+            <h2 id="rec-h" style="margin:0;font-size:22px;font-weight:700;letter-spacing:-0.01em">Recommended for you</h2>
+            <p style="margin:4px 0 0;font-size:14px;color:#556580">{{ recBasis }}</p>
+          </div>
+          <button type="button" onClick="{{ openPrefs }}" style="height:40px;padding:0;border:0;background:transparent;color:#183153;font-size:15px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px" style-hover="color:#C94B40">{{ prefsCta }}</button>
+        </div>
+        <sc-if value="{{ recsGrid }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat({{ recCols }},minmax(0,1fr));gap:28px">
+            <sc-for list="{{ recs }}" as="b" hint-placeholder-count="3">
+              <article style="border-top:2px solid #183153;padding-top:16px;display:flex;flex-direction:column;gap:12px;min-width:0">
+                <a href="{{ b.href }}" tabIndex="-1" aria-hidden="true" style="display:block;aspect-ratio:4/3;background:#EEEAE2;overflow:hidden"><img src="{{ b.img }}" alt="" loading="lazy" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ b.pos }};filter:{{ photoFilter }};display:block"></a>
+                <p style="margin:0;font-size:13px;font-weight:600;color:#A63B31">{{ b.reason }}</p>
+                <div>
+                  <a href="{{ b.href }}" style="font-size:20px;font-weight:700;line-height:1.2;text-decoration:none;color:#183153" style-hover="color:#C94B40">{{ b.name }}</a>
+                  <div style="font-size:14px;color:#556580;margin-top:4px">{{ b.brewery }} · {{ b.meta }}</div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px">
+                  <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:#556580"><svg width="14" height="14" viewBox="0 0 24 24" fill="#183153" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span style="color:#183153;font-weight:600">{{ b.ratingText }}</span><span>{{ b.reviewsText }} ratings</span></div>
+                  <div role="group" aria-label="Your rating for {{ b.name }}" onMouseLeave="{{ b.leave }}" style="display:flex;align-items:center;margin-right:-7px">
+                    <sc-for list="{{ b.stars }}" as="s" hint-placeholder-count="5"><button type="button" aria-label="{{ s.label }}" aria-pressed="{{ s.pressed }}" onClick="{{ s.click }}" onMouseEnter="{{ s.enter }}" style="width:32px;height:36px;padding:0;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:{{ s.color }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button></sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:12px;border-top:1px solid rgba(24,49,83,.14)">
+                  <span style="font-size:17px;font-weight:700;font-variant-numeric:tabular-nums">{{ b.price }}</span>
+                  <button type="button" class="btn btn-secondary" onClick="{{ b.add }}" disabled="{{ b.soldOut }}" style="min-height:40px;padding:0 16px;font-size:14px;border-color:#183153">{{ b.addLabel }}</button>
+                </div>
+              </article>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ recsRows }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top:2px solid #183153">
+            <sc-for list="{{ recs }}" as="b" hint-placeholder-count="3">
+              <article style="display:grid;grid-template-columns:88px minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid rgba(24,49,83,.14)">
+                <a href="{{ b.href }}" tabIndex="-1" aria-hidden="true" style="display:block;width:88px;height:112px;background:#EEEAE2;overflow:hidden"><img src="{{ b.img }}" alt="" loading="lazy" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ b.pos }};filter:{{ photoFilter }};display:block"></a>
+                <div style="min-width:0;display:flex;flex-direction:column;gap:3px">
+                  <p style="margin:0;font-size:13px;font-weight:600;color:#A63B31;line-height:1.35">{{ b.reason }}</p>
+                  <a href="{{ b.href }}" style="font-size:17px;font-weight:700;line-height:1.25;text-decoration:none;color:#183153">{{ b.name }}</a>
+                  <div style="font-size:14px;color:#556580">{{ b.brewery }} · {{ b.meta }}</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px">
+                    <span style="font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">{{ b.price }}</span>
+                    <button type="button" class="btn btn-secondary" onClick="{{ b.add }}" disabled="{{ b.soldOut }}" style="min-height:40px;padding:0 16px;font-size:14px;border-color:#183153">{{ b.addLabel }}</button>
+                  </div>
+                </div>
+              </article>
+            </sc-for>
+          </div>
+        </sc-if>
+      </section>
+    </sc-if>
+
+    <section aria-labelledby="res-h" style="margin-top:clamp(40px,6vw,64px)">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:14px;border-bottom:2px solid #183153">
+        <div>
+          <h2 id="res-h" style="margin:0;font-size:22px;font-weight:700;letter-spacing:-0.01em">{{ resultsTitle }}</h2>
+          <p aria-live="polite" style="margin:4px 0 0;font-size:14px;color:#556580">{{ countText }}</p>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#556580">Sort
+          <span style="position:relative;display:inline-block">
+            <select value="{{ sort }}" onChange="{{ onSort }}" style="appearance:none;-webkit-appearance:none;height:40px;padding:0 34px 0 12px;border:1px solid rgba(24,49,83,.32);background:transparent;color:#183153;font-size:15px;cursor:pointer;border-radius:0">
+              <option value="best">Best match</option><option value="rated">Highest rated</option><option value="popular">Most popular</option><option value="abvAsc">Lowest ABV</option><option value="abvDesc">Highest ABV</option><option value="ibuAsc">Least bitter</option><option value="ibuDesc">Most bitter</option><option value="alpha">Alphabetical</option>
+            </select>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="position:absolute;right:10px;top:12px;pointer-events:none;color:#183153"><path d="m6 9 6 6 6-6"></path></svg>
+          </span>
+        </label>
+      </div>
+
+      <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:48px 0;max-width:520px">
+          <p style="margin:0 0 6px;font-size:20px;font-weight:700">{{ emptyTitle }}</p>
+          <p style="margin:0 0 20px;color:#556580">Check the spelling, try a broader term, or remove a filter.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <button type="button" class="btn btn-secondary" onClick="{{ clearEverything }}" style="min-height:44px;padding:0 18px;border-color:#183153">Show all beers</button>
+            <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="0">
+              <button type="button" onClick="{{ s.go }}" style="min-height:44px;padding:0 16px;border:0;background:#E8ECF2;color:#183153;font-size:15px;cursor:pointer">{{ s.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ gridMode }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:40px 24px;padding-top:28px">
+          <sc-for list="{{ results }}" as="b" hint-placeholder-count="8">
+            <article style="display:flex;flex-direction:column;gap:10px;min-width:0">
+              <a href="{{ b.href }}" tabIndex="-1" aria-hidden="true" style="display:block;aspect-ratio:4/5;background:#EEEAE2;overflow:hidden;position:relative"><img src="{{ b.img }}" alt="" loading="lazy" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ b.pos }};filter:{{ photoFilter }};display:block"><sc-if value="{{ b.soldOut }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:0;top:0;background:#183153;color:#FAF9F6;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:5px 10px">Sold out</span></sc-if></a>
+              <div style="font-size:13px;color:#556580;letter-spacing:0.01em">{{ b.brewery }}</div>
+              <a href="{{ b.href }}" style="font-size:18px;font-weight:700;line-height:1.2;text-decoration:none;color:#183153;margin-top:-6px" style-hover="color:#C94B40">{{ b.name }}</a>
+              <div style="font-size:14px;color:#556580;margin-top:-6px">{{ b.meta }}</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:#556580"><svg width="14" height="14" viewBox="0 0 24 24" fill="#183153" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span style="color:#183153;font-weight:600">{{ b.ratingText }}</span><span>({{ b.reviewsText }})</span></div>
+              <div role="group" aria-label="Your rating for {{ b.name }}" onMouseLeave="{{ b.leave }}" style="display:flex;align-items:center;margin:-6px 0 0 -7px">
+                <sc-for list="{{ b.stars }}" as="s" hint-placeholder-count="5"><button type="button" aria-label="{{ s.label }}" aria-pressed="{{ s.pressed }}" onClick="{{ s.click }}" onMouseEnter="{{ s.enter }}" style="width:32px;height:36px;padding:0;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:{{ s.color }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button></sc-for>
+                <span style="font-size:12px;color:#556580;margin-left:4px">{{ b.myLabel }}</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:10px;border-top:1px solid rgba(24,49,83,.14)">
+                <span style="font-size:17px;font-weight:700;font-variant-numeric:tabular-nums">{{ b.price }}</span>
+                <button type="button" class="btn btn-secondary" onClick="{{ b.add }}" disabled="{{ b.soldOut }}" style="min-height:40px;padding:0 16px;font-size:14px;border-color:#183153">{{ b.addLabel }}</button>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ rowMode }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <sc-for list="{{ results }}" as="b" hint-placeholder-count="6">
+            <article style="display:grid;grid-template-columns:{{ rowImgW }} minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid rgba(24,49,83,.14)">
+              <a href="{{ b.href }}" tabIndex="-1" aria-hidden="true" style="display:block;aspect-ratio:4/5;background:#EEEAE2;overflow:hidden;align-self:start"><img src="{{ b.img }}" alt="" loading="lazy" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ b.pos }};filter:{{ photoFilter }};display:block"></a>
+              <div style="min-width:0;display:flex;flex-direction:column;gap:2px">
+                <a href="{{ b.href }}" style="font-size:17px;font-weight:700;line-height:1.25;text-decoration:none;color:#183153">{{ b.name }}</a>
+                <div style="font-size:14px;color:#556580">{{ b.brewery }} · {{ b.meta }}</div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:#556580;margin-top:4px"><svg width="13" height="13" viewBox="0 0 24 24" fill="#183153" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span style="color:#183153;font-weight:600">{{ b.ratingText }}</span><span>({{ b.reviewsText }})</span><sc-if value="{{ b.soldOut }}" hint-placeholder-val="{{ false }}"><span style="margin-left:6px;color:#A63B31;font-weight:600">Sold out</span></sc-if></div>
+                <div role="group" aria-label="Your rating for {{ b.name }}" onMouseLeave="{{ b.leave }}" style="display:flex;align-items:center;margin-left:-8px">
+                  <sc-for list="{{ b.stars }}" as="s" hint-placeholder-count="5"><button type="button" aria-label="{{ s.label }}" aria-pressed="{{ s.pressed }}" onClick="{{ s.click }}" onMouseEnter="{{ s.enter }}" style="width:36px;height:40px;padding:0;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:{{ s.color }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button></sc-for>
+                  <span style="font-size:12px;color:#556580;margin-left:2px">{{ b.myLabel }}</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                  <span style="font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">{{ b.price }}</span>
+                  <button type="button" class="btn btn-secondary" onClick="{{ b.add }}" disabled="{{ b.soldOut }}" style="min-height:44px;padding:0 18px;font-size:14px;border-color:#183153">{{ b.addLabel }}</button>
+                </div>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}">
+        <div style="padding-top:36px">
+          <button type="button" class="btn btn-secondary" onClick="{{ showMore }}" style="min-height:48px;padding:0 22px;font-size:15px;border-color:#183153">{{ moreLabel }}</button>
+        </div>
+      </sc-if>
+    </section>
+  </div>
+</sc-if>
+
+<!-- ========== BEER DETAIL ========== -->
+<sc-if value="{{ isBeer }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1240px;margin:0 auto;padding:20px clamp(16px,4vw,40px) 72px">
+    <a href="#/explore" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:15px;font-weight:500;text-decoration:none;color:#183153"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>All beers</a>
+    <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:48px 0"><h1 style="font-size:28px;margin:0 0 8px">We couldn't find that beer.</h1><p style="color:#556580;margin:0 0 20px">It may have been removed from the catalog.</p><a href="#/explore" class="btn btn-primary" style="min-height:44px;padding:0 20px">Browse all beers</a></div>
+    </sc-if>
+    <sc-if value="{{ d }}" hint-placeholder-val="{{ false }}">
+      <article style="display:grid;grid-template-columns:{{ detailCols }};gap:clamp(24px,5vw,64px);margin-top:12px;align-items:start">
+        <div style="background:#EEEAE2;aspect-ratio:{{ detailRatio }};overflow:hidden"><img src="{{ d.imgLg }}" alt="{{ d.alt }}" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ d.pos }};filter:{{ photoFilter }};display:block"></div>
+        <div style="min-width:0">
+          <p style="margin:0 0 8px;font-size:14px;color:#556580">{{ d.brewery }} · {{ d.region }}</p>
+          <h1 style="margin:0 0 6px;font-size:clamp(30px,4vw,44px);font-weight:800;line-height:1.05;letter-spacing:-0.02em;font-stretch:106%;text-wrap:balance">{{ d.name }}</h1>
+          <p style="margin:0 0 20px;font-size:17px">{{ d.style }}</p>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px;margin-bottom:20px">
+            <div>
+              <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#556580;margin-bottom:2px">Community</div>
+              <div style="display:flex;align-items:center;gap:6px;height:40px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#183153" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span style="font-size:20px;font-weight:700">{{ d.ratingText }}</span><span style="font-size:14px;color:#556580">{{ d.reviewsText }} ratings</span></div>
+            </div>
+            <div>
+              <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#556580;margin-bottom:2px">{{ d.myLabelLong }}</div>
+              <div role="group" aria-label="Your rating for {{ d.name }}" onMouseLeave="{{ d.leave }}" style="display:flex;align-items:center;margin-left:-8px">
+                <sc-for list="{{ d.stars }}" as="s" hint-placeholder-count="5"><button type="button" aria-label="{{ s.label }}" aria-pressed="{{ s.pressed }}" onClick="{{ s.click }}" onMouseEnter="{{ s.enter }}" style="width:40px;height:40px;padding:0;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:{{ s.color }}"><svg width="26" height="26" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button></sc-for>
+              </div>
+            </div>
+          </div>
+          <dl style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 20px;border-top:2px solid #183153;border-bottom:2px solid #183153">
+            <div style="padding:14px 0"><dt style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#556580">ABV</dt><dd style="margin:2px 0 0;font-size:22px;font-weight:700">{{ d.abv }}</dd></div>
+            <div style="padding:14px 0 14px 16px;border-left:1px solid rgba(24,49,83,.2)"><dt style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#556580">IBU</dt><dd style="margin:2px 0 0;font-size:22px;font-weight:700">{{ d.ibu }} <span style="font-size:13px;font-weight:500;color:#556580">{{ d.ibuWord }}</span></dd></div>
+            <div style="padding:14px 0 14px 16px;border-left:1px solid rgba(24,49,83,.2)"><dt style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#556580">Price</dt><dd style="margin:2px 0 0;font-size:22px;font-weight:700">{{ d.price }}</dd></div>
+          </dl>
+          <p style="margin:0 0 12px;font-size:14px;color:{{ d.availColor }};font-weight:600">{{ d.availability }} · {{ d.season }}</p>
+          <div style="display:flex;gap:10px;align-items:stretch">
+            <div style="display:inline-flex;align-items:center;border:1px solid rgba(24,49,83,.32);height:52px">
+              <button type="button" aria-label="Decrease quantity" onClick="{{ dDec }}" style="width:48px;height:50px;border:0;background:transparent;color:#183153;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(24,49,83,.06)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+              <span aria-live="polite" aria-label="Quantity {{ dQty }}" style="min-width:28px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums">{{ dQty }}</span>
+              <button type="button" aria-label="Increase quantity" onClick="{{ dInc }}" style="width:48px;height:50px;border:0;background:transparent;color:#183153;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(24,49,83,.06)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+            <button type="button" class="btn btn-primary" onClick="{{ dAdd }}" disabled="{{ d.soldOut }}" style="flex:1;min-height:52px;padding:0 20px;font-size:16px;justify-content:space-between"><span>{{ dAddLabel }}</span><span style="font-variant-numeric:tabular-nums">{{ dTotal }}</span></button>
+          </div>
+
+          <div style="margin-top:36px;padding-top:20px;border-top:2px solid #183153">
+            <h2 style="margin:0 0 8px;font-size:15px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">About this beer</h2>
+            <p style="margin:0 0 16px;font-size:17px;line-height:1.6;max-width:60ch;text-wrap:pretty">{{ d.description }}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ d.flavors }}" as="fl" hint-placeholder-count="3"><span style="font-size:14px;padding:5px 12px;background:#E8ECF2;color:#183153">{{ fl }}</span></sc-for>
+            </div>
+          </div>
+          <div style="margin-top:28px;padding-top:20px;border-top:2px solid #183153">
+            <h2 style="margin:0 0 8px;font-size:15px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Kosher status</h2>
+            <p style="margin:0 0 6px;font-size:17px;font-weight:600">{{ d.kosher }}</p>
+            <p style="margin:0;font-size:14px;color:#556580;max-width:60ch">{{ d.kosherNote }} See <a href="#/kosher">Understanding Kosher Beer</a>.</p>
+          </div>
+          <div style="margin-top:28px;padding-top:20px;border-top:2px solid #183153">
+            <h2 style="margin:0 0 8px;font-size:15px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Details</h2>
+            <dl style="display:grid;grid-template-columns:auto 1fr;gap:6px 24px;margin:0;font-size:15px">
+              <dt style="color:#556580">Brewery</dt><dd style="margin:0">{{ d.brewery }}</dd>
+              <dt style="color:#556580">Region</dt><dd style="margin:0">{{ d.region }}</dd>
+              <dt style="color:#556580">Style</dt><dd style="margin:0">{{ d.style }}</dd>
+              <dt style="color:#556580">Availability</dt><dd style="margin:0">{{ d.season }}</dd>
+            </dl>
+          </div>
+        </div>
+      </article>
+
+      <section aria-labelledby="sim-h" style="margin-top:clamp(48px,7vw,80px)">
+        <h2 id="sim-h" style="margin:0;padding-bottom:14px;border-bottom:2px solid #183153;font-size:22px;font-weight:700">Similar beers</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax({{ simMin }},1fr));gap:28px 24px;padding-top:24px">
+          <sc-for list="{{ similar }}" as="b" hint-placeholder-count="4">
+            <a href="{{ b.href }}" style="display:grid;grid-template-columns:{{ simCols }};gap:12px 16px;text-decoration:none;color:#183153;align-items:start" style-hover="color:#C94B40">
+              <span style="display:block;aspect-ratio:4/5;background:#EEEAE2;overflow:hidden"><img src="{{ b.img }}" alt="" loading="lazy" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ b.pos }};filter:{{ photoFilter }};display:block"></span>
+              <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                <span style="font-size:17px;font-weight:700;line-height:1.25">{{ b.name }}</span>
+                <span style="font-size:14px;color:#556580">{{ b.brewery }} · {{ b.meta }}</span>
+                <span style="font-size:14px;color:#556580">★ {{ b.ratingText }} · {{ b.price }}</span>
+              </span>
+            </a>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+  </div>
+</sc-if>
+
+<!-- ========== SHOP ========== -->
+<sc-if value="{{ isShop }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(16px,4vw,40px) 72px">
+    <p style="margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#A63B31">Shop</p>
+    <h1 style="margin:0 0 10px;font-size:clamp(30px,4.4vw,46px);font-weight:800;line-height:1.05;letter-spacing:-0.02em;font-stretch:108%">Shop &amp; Shabbos Packages</h1>
+    <p style="margin:0;max-width:56ch;font-size:17px;color:#3D4F6B">Curated boxes for the Shabbos table, or individual beers by the bottle.</p>
+    <nav aria-label="Shop sections" style="display:flex;gap:24px;margin-top:20px;font-size:15px;font-weight:600">
+      <a href="#/shop" onClick="{{ jumpPackages }}" style="min-height:44px;display:flex;align-items:center">Shabbos packages</a>
+      <a href="#/shop" onClick="{{ jumpSingles }}" style="min-height:44px;display:flex;align-items:center">Individual beers</a>
+    </nav>
+
+    <section id="packages" ref="{{ pkgRef }}" aria-labelledby="pkg-h" style="margin-top:clamp(28px,4vw,44px)">
+      <h2 id="pkg-h" style="margin:0;padding-bottom:14px;border-bottom:2px solid #183153;font-size:22px;font-weight:700">Shabbos packages</h2>
+      <sc-for list="{{ packages }}" as="p" hint-placeholder-count="5">
+        <article style="display:grid;grid-template-columns:{{ pkgCols }};gap:20px clamp(20px,3vw,40px);padding:clamp(20px,3vw,32px) 0;border-bottom:1px solid rgba(24,49,83,.2);align-items:start">
+          <div style="display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:4px;aspect-ratio:3/2">
+            <img src="{{ p.p1 }}" alt="" loading="lazy" onError="{{ imgErr }}" style="grid-row:1 / 3;width:100%;height:100%;object-fit:cover;filter:{{ photoFilter }};display:block;background:#EEEAE2">
+            <img src="{{ p.p2 }}" alt="" loading="lazy" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;filter:{{ photoFilter }};display:block;background:#EEEAE2">
+            <img src="{{ p.p3 }}" alt="" loading="lazy" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;filter:{{ photoFilter }};display:block;background:#EEEAE2">
+          </div>
+          <div style="min-width:0">
+            <p style="margin:0 0 4px;font-size:13px;font-weight:600;color:#A63B31">{{ p.for }}</p>
+            <h3 style="margin:0 0 6px;font-size:22px;font-weight:700;line-height:1.2;letter-spacing:-0.01em">{{ p.name }}</h3>
+            <p style="margin:0 0 12px;color:#3D4F6B;text-wrap:pretty">{{ p.desc }}</p>
+            <button type="button" onClick="{{ p.toggle }}" aria-expanded="{{ p.open }}" style="display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0;border:0;background:transparent;color:#183153;font-size:15px;font-weight:600;cursor:pointer" style-hover="color:#C94B40">{{ p.insideLabel }}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="transform:{{ p.chev }}"><path d="m6 9 6 6 6-6"></path></svg></button>
+            <sc-if value="{{ p.open }}" hint-placeholder-val="{{ false }}">
+              <ul style="list-style:none;margin:6px 0 0;padding:0;border-top:1px solid rgba(24,49,83,.14)">
+                <sc-for list="{{ p.items }}" as="it" hint-placeholder-count="0">
+                  <li style="border-bottom:1px solid rgba(24,49,83,.14)"><a href="{{ it.href }}" style="display:flex;justify-content:space-between;gap:12px;padding:9px 0;text-decoration:none;font-size:15px"><span style="font-weight:600">{{ it.name }}</span><span style="color:#556580;text-align:right">{{ it.meta }}</span></a></li>
+                </sc-for>
+              </ul>
+            </sc-if>
+          </div>
+          <div style="display:flex;flex-direction:{{ pkgBuyDir }};gap:12px;align-items:{{ pkgBuyAlign }};justify-content:space-between">
+            <div>
+              <div style="font-size:24px;font-weight:800;font-variant-numeric:tabular-nums">{{ p.price }}</div>
+              <div style="font-size:14px;color:#556580">{{ p.count }} · <span style="color:#A63B31;font-weight:600">{{ p.savings }}</span></div>
+            </div>
+            <button type="button" class="btn btn-primary" onClick="{{ p.add }}" style="min-height:48px;padding:0 20px;font-size:15px;min-width:160px;justify-content:flex-start">Add to cart</button>
+          </div>
+        </article>
+      </sc-for>
+    </section>
+
+    <section id="singles" ref="{{ singlesRef }}" aria-labelledby="single-h" style="margin-top:clamp(44px,6vw,72px)">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:14px;border-bottom:2px solid #183153">
+        <div>
+          <h2 id="single-h" style="margin:0;font-size:22px;font-weight:700">Individual beers</h2>
+          <p style="margin:4px 0 0;font-size:14px;color:#556580">{{ shopCount }}</p>
+        </div>
+        <span style="position:relative;display:inline-block">
+          <select aria-label="Filter by style" value="{{ shopStyle }}" onChange="{{ onShopStyle }}" style="appearance:none;-webkit-appearance:none;height:44px;padding:0 38px 0 14px;border:1px solid rgba(24,49,83,.32);background:transparent;color:#183153;font-size:15px;cursor:pointer;border-radius:0">
+            <option value="">All styles</option>
+            <sc-for list="{{ styles }}" as="s" hint-placeholder-count="0"><option value="{{ s }}">{{ s }}</option></sc-for>
+          </select>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="position:absolute;right:12px;top:14px;pointer-events:none"><path d="m6 9 6 6 6-6"></path></svg>
+        </span>
+      </div>
+      <div style="display:grid;grid-template-columns:{{ shopGrid }};gap:{{ shopGap }}">
+        <sc-for list="{{ shopItems }}" as="b" hint-placeholder-count="8">
+          <article style="display:grid;grid-template-columns:{{ shopCardCols }};gap:12px 16px;padding:{{ shopCardPad }};border-bottom:{{ shopCardBorder }};min-width:0">
+            <a href="{{ b.href }}" tabIndex="-1" aria-hidden="true" style="display:block;aspect-ratio:4/5;background:#EEEAE2;overflow:hidden"><img src="{{ b.img }}" alt="" loading="lazy" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ b.pos }};filter:{{ photoFilter }};display:block"></a>
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+              <a href="{{ b.href }}" style="font-size:17px;font-weight:700;line-height:1.25;text-decoration:none;color:#183153" style-hover="color:#C94B40">{{ b.name }}</a>
+              <div style="font-size:14px;color:#556580">{{ b.brewery }} · {{ b.style }}</div>
+              <div style="font-size:16px;font-weight:700;margin:4px 0 10px;font-variant-numeric:tabular-nums">{{ b.price }} <span style="font-size:13px;font-weight:500;color:{{ b.availColor }}">{{ b.availShort }}</span></div>
+              <div style="display:flex;gap:8px;align-items:stretch;margin-top:auto">
+                <div style="display:inline-flex;align-items:center;border:1px solid rgba(24,49,83,.32);height:44px">
+                  <button type="button" aria-label="Decrease quantity of {{ b.name }}" onClick="{{ b.dec }}" style="width:40px;height:42px;border:0;background:transparent;color:#183153;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(24,49,83,.06)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+                  <span style="min-width:24px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums">{{ b.qty }}</span>
+                  <button type="button" aria-label="Increase quantity of {{ b.name }}" onClick="{{ b.inc }}" style="width:40px;height:42px;border:0;background:transparent;color:#183153;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(24,49,83,.06)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+                </div>
+                <button type="button" class="btn btn-secondary" onClick="{{ b.addQty }}" disabled="{{ b.soldOut }}" style="flex:1;min-height:44px;padding:0 14px;font-size:14px;border-color:#183153">{{ b.addLabel }}</button>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+</sc-if>
+
+<!-- ========== CHECKOUT ========== -->
+<sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1040px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(16px,4vw,40px) 72px">
+    <div role="note" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:2px solid #183153;margin-bottom:28px;font-size:15px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C94B40" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h0"></path></svg>
+      <span><strong>Demonstration checkout.</strong> No payment is taken and no real order is placed.</span>
+    </div>
+    <sc-if value="{{ order }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:560px">
+        <h1 style="margin:0 0 10px;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-0.02em">Thank you, {{ order.name }}.</h1>
+        <p style="margin:0 0 6px;font-size:17px">Demo order <strong>{{ order.no }}</strong> · {{ order.total }}</p>
+        <p style="margin:0 0 24px;color:#556580">Delivery: {{ order.slot }}. In a live store you would receive a confirmation email at {{ order.email }}.</p>
+        <a href="#/explore" class="btn btn-primary" style="min-height:48px;padding:0 22px;text-decoration:none">Keep exploring</a>
+      </div>
+    </sc-if>
+    <sc-if value="{{ checkoutEmpty }}" hint-placeholder-val="{{ false }}">
+      <div><h1 style="margin:0 0 10px;font-size:32px;font-weight:800">Your cart is empty.</h1><p style="color:#556580;margin:0 0 20px">Add a beer or a Shabbos package to check out.</p><div style="display:flex;flex-wrap:wrap;gap:10px"><a href="#/explore" class="btn btn-primary" style="min-height:48px;padding:0 20px;text-decoration:none">Explore beers</a><a href="#/shop" class="btn btn-secondary" style="min-height:48px;padding:0 20px;text-decoration:none;border-color:#183153">Shabbos packages</a></div></div>
+    </sc-if>
+    <sc-if value="{{ checkoutForm }}" hint-placeholder-val="{{ false }}">
+      <h1 style="margin:0 0 24px;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-0.02em">Checkout</h1>
+      <div style="display:grid;grid-template-columns:{{ coCols }};gap:clamp(28px,5vw,56px);align-items:start">
+        <form onSubmit="{{ placeOrder }}" noValidate="noValidate" style="display:flex;flex-direction:column;gap:18px">
+          <div class="field"><label for="co-name" style="font-size:14px;color:#183153;font-weight:600">Full name</label><input id="co-name" class="input" autoComplete="name" value="{{ form.name }}" onChange="{{ onName }}" style="min-height:48px;font-size:16px;background:#FFFFFF;border-color:rgba(24,49,83,.4)"></div>
+          <div class="field"><label for="co-email" style="font-size:14px;color:#183153;font-weight:600">Email</label><input id="co-email" type="email" class="input" autoComplete="email" inputMode="email" value="{{ form.email }}" onChange="{{ onEmail }}" style="min-height:48px;font-size:16px;background:#FFFFFF;border-color:rgba(24,49,83,.4)"></div>
+          <div class="field"><label for="co-addr" style="font-size:14px;color:#183153;font-weight:600">Delivery address</label><input id="co-addr" class="input" autoComplete="street-address" value="{{ form.address }}" onChange="{{ onAddress }}" style="min-height:48px;font-size:16px;background:#FFFFFF;border-color:rgba(24,49,83,.4)"></div>
+          <fieldset style="border:0;margin:0;padding:0">
+            <legend style="font-size:14px;font-weight:600;margin-bottom:8px;padding:0">Delivery window</legend>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ slots }}" as="c" hint-placeholder-count="3"><button type="button" onClick="{{ c.toggle }}" aria-pressed="{{ c.pressed }}" style="min-height:44px;padding:0 16px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:15px;cursor:pointer">{{ c.label }}</button></sc-for>
+            </div>
+          </fieldset>
+          <sc-if value="{{ formErr }}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin:0;color:#A63B31;font-weight:600;font-size:15px">Please fill in your name, a valid email and a delivery address.</p></sc-if>
+          <button type="submit" class="btn btn-primary" style="min-height:52px;padding:0 20px;font-size:16px;justify-content:space-between"><span>Place demo order</span><span style="font-variant-numeric:tabular-nums">{{ totals.total }}</span></button>
+        </form>
+        <aside aria-label="Order summary" style="border-top:2px solid #183153;padding-top:14px">
+          <h2 style="margin:0 0 8px;font-size:15px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Order summary</h2>
+          <sc-for list="{{ cartLines }}" as="l" hint-placeholder-count="2">
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(24,49,83,.14);font-size:15px"><span>{{ l.qty }} × {{ l.name }}</span><span style="font-variant-numeric:tabular-nums">{{ l.total }}</span></div>
+          </sc-for>
+          <dl style="display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:12px 0 0;font-size:15px">
+            <dt style="color:#556580">Subtotal</dt><dd style="margin:0;font-variant-numeric:tabular-nums">{{ totals.subtotal }}</dd>
+            <dt style="color:#556580">Estimated tax (demo, 8%)</dt><dd style="margin:0;font-variant-numeric:tabular-nums">{{ totals.tax }}</dd>
+            <dt style="color:#556580">Delivery (demo)</dt><dd style="margin:0;font-variant-numeric:tabular-nums">{{ totals.delivery }}</dd>
+            <dt style="font-weight:700;padding-top:8px;border-top:2px solid #183153">Total</dt><dd style="margin:0;font-weight:700;padding-top:8px;border-top:2px solid #183153;font-variant-numeric:tabular-nums">{{ totals.total }}</dd>
+          </dl>
+        </aside>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<!-- ========== VISION ========== -->
+<sc-if value="{{ isVision }}" hint-placeholder-val="{{ false }}">
+  <article>
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(16px,4vw,40px) 0">
+      <p style="margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#A63B31">About us</p>
+      <h1 style="margin:0 0 clamp(24px,4vw,40px);font-size:clamp(34px,5.4vw,60px);font-weight:800;line-height:1;letter-spacing:-0.025em;font-stretch:110%">Our Vision</h1>
+      <div style="aspect-ratio:21/8;min-height:180px;background:#EEEAE2;overflow:hidden"><img src="{{ breweryImage }}" alt="Brewhouse with steel fermentation tanks" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;filter:{{ photoFilter }};display:block"></div>
+    </div>
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(16px,4vw,40px) 88px;display:grid;grid-template-columns:{{ articleCols }};gap:24px 48px">
+      <div style="border-top:2px solid #183153;padding-top:12px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#556580">Vision · Mission · Story</div>
+      <div style="border-top:2px solid #183153;padding-top:20px;max-width:68ch">
+        <p style="margin:0;font-size:clamp(18px,2vw,21px);line-height:1.6;padding:20px 24px;background:#F1EEE8;text-wrap:pretty">[PLACEHOLDER — OUR VISION: The company will provide its official vision, mission, story, and brand messaging here. Do not generate or assume this content.]</p>
+      </div>
+    </div>
+  </article>
+</sc-if>
+
+<!-- ========== UNDERSTANDING KOSHER BEER ========== -->
+<sc-if value="{{ isKosher }}" hint-placeholder-val="{{ false }}">
+  <article>
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(16px,4vw,40px) 0">
+      <p style="margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#A63B31">Guide</p>
+      <h1 style="margin:0 0 12px;font-size:clamp(34px,5.4vw,60px);font-weight:800;line-height:1;letter-spacing:-0.025em;font-stretch:110%;max-width:14ch">Understanding Kosher Beer</h1>
+      <p style="margin:0 0 clamp(24px,4vw,40px);font-size:18px;color:#3D4F6B;max-width:52ch">Ingredients, production methods, certification and practical considerations.</p>
+      <div style="aspect-ratio:21/8;min-height:180px;background:#EEEAE2;overflow:hidden"><img src="{{ heroImage }}" alt="Fresh hops and malt" onError="{{ imgErr }}" style="width:100%;height:100%;object-fit:cover;filter:{{ photoFilter }};display:block"></div>
+    </div>
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(16px,4vw,40px) 88px;display:grid;grid-template-columns:{{ articleCols }};gap:24px 48px">
+      <div style="border-top:2px solid #183153;padding-top:12px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#556580">Article</div>
+      <div style="border-top:2px solid #183153;padding-top:20px;max-width:68ch">
+        <p style="margin:0 0 24px;font-size:clamp(18px,2vw,21px);line-height:1.6;padding:20px 24px;background:#F1EEE8;text-wrap:pretty">[PLACEHOLDER — KOSHER BEER EXPLANATION: The company will provide a detailed, authoritative explanation of the complexities of kosher beer, including ingredients, production methods, certification, and practical considerations. Do not generate or assume this content.]</p>
+        <p style="margin:0;font-size:14px;color:#556580">Kosher status shown on product pages in this demo is sample data and has not been verified.</p>
+      </div>
+    </div>
+  </article>
+</sc-if>
+</main>
+
+<footer style="border-top:2px solid #183153;margin-top:auto">
+  <div style="max-width:1240px;margin:0 auto;padding:32px clamp(16px,4vw,40px) 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px 48px">
+    <div>
+      <div style="display:flex;align-items:baseline;gap:6px"><span style="font-weight:800;font-size:17px;font-stretch:118%;text-transform:uppercase">Kosher Beer</span><span style="font-weight:600;font-size:11px;letter-spacing:0.14em;color:#C94B40;text-transform:uppercase">Co.</span></div>
+      <p style="margin:10px 0 0;font-size:13px;color:#556580;max-width:36ch">Demo storefront. Products, prices, ratings and kosher status are sample data and have not been verified.</p>
+    </div>
+    <nav aria-label="Footer" style="display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4"><a href="{{ n.href }}" style="font-size:15px;text-decoration:none;min-height:36px;display:flex;align-items:center">{{ n.label }}</a></sc-for>
+    </nav>
+    <div style="font-size:13px;color:#556580;align-self:end">© 2026 Kosher Beer Co.</div>
+  </div>
+</footer>
+
+<!-- ========== SHEETS ========== -->
+<sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeSheet }}" style="position:fixed;inset:0;z-index:50;background:rgba(24,49,83,.45)"></div>
+  <div ref="{{ panelRef }}" tabIndex="-1" role="dialog" aria-modal="true" aria-label="{{ panelTitle }}" style="position:fixed;z-index:51;top:{{ pTop }};right:0;bottom:0;left:{{ pLeft }};width:{{ pW }};background:#FAF9F6;display:flex;flex-direction:column;outline:none;box-shadow:0 -8px 32px rgba(24,49,83,.18)">
+    <div style="display:flex;align-items:center;gap:12px;padding:0 clamp(16px,3vw,24px);min-height:64px;border-bottom:2px solid #183153;flex:none">
+      <h2 style="margin:0;font-size:20px;font-weight:700;margin-right:auto">{{ panelTitle }}</h2>
+      <sc-if value="{{ isFilters }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ clearAll }}" style="min-height:44px;padding:0 8px;border:0;background:transparent;color:#A63B31;font-size:15px;font-weight:600;cursor:pointer">Clear all</button></sc-if>
+      <button type="button" onClick="{{ closeSheet }}" aria-label="Close" style="width:44px;height:44px;margin-right:-10px;border:0;background:transparent;color:#183153;display:grid;place-items:center;cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    </div>
+
+    <sc-if value="{{ isFilters }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;overflow:auto;padding:0 clamp(16px,3vw,24px);overscroll-behavior:contain">
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="0">
+          <section style="border-bottom:1px solid rgba(24,49,83,.16)">
+            <button type="button" onClick="{{ g.toggle }}" aria-expanded="{{ g.open }}" style="width:100%;min-height:56px;display:flex;align-items:center;gap:10px;padding:0;border:0;background:transparent;color:#183153;cursor:pointer;text-align:left">
+              <span style="font-size:16px;font-weight:700;margin-right:auto">{{ g.title }}</span>
+              <span style="font-size:14px;color:#556580">{{ g.summary }}</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="transform:{{ g.chev }}"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 0 18px">
+                <sc-if value="{{ g.note }}" hint-placeholder-val="{{ false }}"><p style="margin:0 0 10px;font-size:13px;color:#556580">{{ g.note }}</p></sc-if>
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <sc-for list="{{ g.chips }}" as="c" hint-placeholder-count="0"><button type="button" onClick="{{ c.toggle }}" aria-pressed="{{ c.pressed }}" style="min-height:40px;padding:0 14px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;cursor:pointer">{{ c.label }}</button></sc-for>
+                </div>
+                <sc-if value="{{ g.range }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:14px">
+                    <label style="font-size:13px;color:#556580;display:flex;flex-direction:column;gap:4px;min-width:0">{{ g.range.minLabel }}<input type="number" inputMode="decimal" min="0" step="{{ g.range.step }}" value="{{ g.range.min }}" onChange="{{ g.range.onMin }}" placeholder="{{ g.range.minPh }}" style="width:100%;min-width:0;box-sizing:border-box;height:44px;padding:0 12px;border:1px solid rgba(24,49,83,.32);background:#FFFFFF;color:#183153;font-size:16px;border-radius:0"></label>
+                    <label style="font-size:13px;color:#556580;display:flex;flex-direction:column;gap:4px;min-width:0">{{ g.range.maxLabel }}<input type="number" inputMode="decimal" min="0" step="{{ g.range.step }}" value="{{ g.range.max }}" onChange="{{ g.range.onMax }}" placeholder="{{ g.range.maxPh }}" style="width:100%;min-width:0;box-sizing:border-box;height:44px;padding:0 12px;border:1px solid rgba(24,49,83,.32);background:#FFFFFF;color:#183153;font-size:16px;border-radius:0"></label>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+          </section>
+        </sc-for>
+        <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;cursor:pointer;font-size:16px;font-weight:700">In stock only
+          <input type="checkbox" checked="{{ f.inStock }}" onChange="{{ toggleInStock }}" style="width:22px;height:22px;accent-color:#183153;cursor:pointer">
+        </label>
+      </div>
+      <div style="flex:none;padding:12px clamp(16px,3vw,24px) calc(12px + env(safe-area-inset-bottom));border-top:2px solid #183153">
+        <button type="button" class="btn btn-primary" onClick="{{ closeSheet }}" style="width:100%;min-height:52px;font-size:16px;padding:0 20px;justify-content:flex-start">{{ applyLabel }}</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCart }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:32px clamp(16px,3vw,24px)">
+          <p style="margin:0 0 6px;font-size:20px;font-weight:700">Your cart is empty.</p>
+          <p style="margin:0 0 20px;color:#556580">Find a beer you like, or start with a Shabbos package.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;max-width:320px">
+            <a href="#/explore" onClick="{{ closeSheet }}" class="btn btn-primary" style="min-height:48px;padding:0 18px;text-decoration:none;justify-content:flex-start">Explore beers</a>
+            <a href="#/shop" onClick="{{ closeSheet }}" class="btn btn-secondary" style="min-height:48px;padding:0 18px;text-decoration:none;border-color:#183153;justify-content:flex-start">See Shabbos packages</a>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ cartHas }}" hint-placeholder-val="{{ false }}">
+        <ul style="flex:1;overflow:auto;list-style:none;margin:0;padding:0 clamp(16px,3vw,24px);overscroll-behavior:contain">
+          <sc-for list="{{ cartLines }}" as="l" hint-placeholder-count="0">
+            <li style="display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;padding:16px 0;border-bottom:1px solid rgba(24,49,83,.16)">
+              <img src="{{ l.img }}" alt="" onError="{{ imgErr }}" style="width:64px;height:80px;object-fit:cover;filter:{{ photoFilter }};background:#EEEAE2">
+              <div style="min-width:0">
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+                  <span style="font-size:16px;font-weight:700;line-height:1.25">{{ l.name }}</span>
+                  <span style="font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap">{{ l.total }}</span>
+                </div>
+                <div style="font-size:13px;color:#556580;margin:2px 0 10px">{{ l.sub }} · {{ l.unit }} each</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                  <div style="display:inline-flex;align-items:center;border:1px solid rgba(24,49,83,.32);height:44px">
+                    <button type="button" aria-label="Decrease quantity of {{ l.name }}" onClick="{{ l.dec }}" style="width:44px;height:42px;border:0;background:transparent;color:#183153;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(24,49,83,.06)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+                    <span style="min-width:26px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums">{{ l.qty }}</span>
+                    <button type="button" aria-label="Increase quantity of {{ l.name }}" onClick="{{ l.inc }}" style="width:44px;height:42px;border:0;background:transparent;color:#183153;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(24,49,83,.06)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+                  </div>
+                  <button type="button" onClick="{{ l.remove }}" style="min-height:44px;padding:0 4px;border:0;background:transparent;color:#556580;font-size:14px;cursor:pointer;text-decoration:underline;text-underline-offset:3px" style-hover="color:#A63B31">Remove</button>
+                </div>
+              </div>
+            </li>
+          </sc-for>
+        </ul>
+        <div style="flex:none;padding:14px clamp(16px,3vw,24px) calc(14px + env(safe-area-inset-bottom));border-top:2px solid #183153">
+          <dl style="display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin:0 0 12px;font-size:15px">
+            <dt style="color:#556580">Subtotal</dt><dd style="margin:0;font-variant-numeric:tabular-nums">{{ totals.subtotal }}</dd>
+            <dt style="color:#556580">Estimated tax (demo, 8%)</dt><dd style="margin:0;font-variant-numeric:tabular-nums">{{ totals.tax }}</dd>
+            <dt style="color:#556580">{{ totals.deliveryLabel }}</dt><dd style="margin:0;font-variant-numeric:tabular-nums">{{ totals.delivery }}</dd>
+            <dt style="font-weight:700;font-size:17px">Total</dt><dd style="margin:0;font-weight:700;font-size:17px;font-variant-numeric:tabular-nums">{{ totals.total }}</dd>
+          </dl>
+          <a href="#/checkout" onClick="{{ closeSheet }}" class="btn btn-primary" style="width:100%;min-height:52px;padding:0 20px;font-size:16px;text-decoration:none;justify-content:space-between"><span>Checkout</span><span style="font-variant-numeric:tabular-nums">{{ totals.total }}</span></a>
+          <p style="margin:8px 0 0;font-size:12px;color:#556580">Demo checkout. No payment is taken.</p>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isPrefs }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;overflow:auto;padding:16px clamp(16px,3vw,24px) 8px;overscroll-behavior:contain">
+        <p style="margin:0 0 18px;color:#3D4F6B;font-size:15px">Pick anything that applies. Your ratings are used too.</p>
+        <sc-for list="{{ prefGroups }}" as="g" hint-placeholder-count="0">
+          <fieldset style="border:0;margin:0 0 22px;padding:0">
+            <legend style="font-size:16px;font-weight:700;margin-bottom:10px;padding:0">{{ g.title }}</legend>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ g.chips }}" as="c" hint-placeholder-count="0"><button type="button" onClick="{{ c.toggle }}" aria-pressed="{{ c.pressed }}" style="min-height:40px;padding:0 14px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;cursor:pointer">{{ c.label }}</button></sc-for>
+            </div>
+          </fieldset>
+        </sc-for>
+      </div>
+      <div style="flex:none;display:flex;gap:10px;padding:12px clamp(16px,3vw,24px) calc(12px + env(safe-area-inset-bottom));border-top:2px solid #183153">
+        <button type="button" class="btn btn-secondary" onClick="{{ resetPrefs }}" style="min-height:52px;padding:0 18px;font-size:15px;border-color:#183153">Reset</button>
+        <button type="button" class="btn btn-primary" onClick="{{ savePrefs }}" style="flex:1;min-height:52px;padding:0 20px;font-size:16px;justify-content:flex-start">Save preferences</button>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+  <div role="status" aria-live="polite" style="position:fixed;z-index:45;left:clamp(12px,3vw,24px);right:clamp(12px,3vw,24px);bottom:calc(16px + env(safe-area-inset-bottom));max-width:420px;margin-left:auto;background:#183153;color:#FAF9F6;display:flex;align-items:center;gap:12px;padding:6px 6px 6px 16px;box-shadow:0 8px 24px rgba(24,49,83,.25)">
+    <span style="flex:1;font-size:15px">{{ toast }}</span>
+    <button type="button" onClick="{{ openCart }}" style="min-height:44px;padding:0 14px;border:0;background:transparent;color:#E9B949;font-size:15px;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px">View cart</button>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;photoTreatment&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Color&quot;,&quot;Black &amp; white&quot;],&quot;default&quot;:&quot;Color&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;desktopLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Grid&quot;,&quot;List&quot;],&quot;default&quot;:&quot;Grid&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const LSK = 'kbc.';
+const load = (k, d) => { try { const v = localStorage.getItem(LSK + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+const save = (k, v) => { try { localStorage.setItem(LSK + k, JSON.stringify(v)); } catch (e) {} };
+const EMPTY = { styles: [], flavors: [], breweries: [], countries: [], kosher: [], abvMin: '', abvMax: '', ibuMin: '', ibuMax: '', minRating: 0, mine: 'any', season: 'any', inStock: false };
+const ABV_P = { low: ['', '4.9'], medium: ['5', '6.9'], strong: ['7', ''] };
+const IBU_P = { mild: ['', '24'], balanced: ['25', '49'], bitter: ['50', ''] };
+const money = n => '$' + n.toFixed(2);
+const TAX = 0.08, DELIVERY = 5.99, FREE_OVER = 60;
+const PAGES = ['explore', 'beer', 'shop', 'vision', 'kosher', 'checkout'];
+const readRoute = () => { const h = (location.hash || '').replace(/^#\/?/, ''); const [p, id] = h.split('/'); return { page: PAGES.includes(p) ? p : 'explore', id: id || null }; };
+const lev = (a, b) => { const m = a.length, n = b.length; if (!m || !n) return m || n; let prev = Array.from({ length: n + 1 }, (_, i) => i); for (let i = 1; i <= m; i++) { const cur = [i]; for (let j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = cur; } return prev[n]; };
+const chip = (label, on, toggle) => ({ label, on, toggle, pressed: on ? 'true' : 'false', bg: on ? '#183153' : 'transparent', fg: on ? '#FAF9F6' : '#183153', bd: on ? '#183153' : 'rgba(24,49,83,.32)' });
+const abvKey = (lo, hi) => Object.keys(ABV_P).find(k => ABV_P[k][0] === lo && ABV_P[k][1] === hi) || (lo || hi ? 'custom' : '');
+const ibuKey = (lo, hi) => Object.keys(IBU_P).find(k => IBU_P[k][0] === lo && IBU_P[k][1] === hi) || (lo || hi ? 'custom' : '');
+const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+
+class Component extends DCLogic {
+  state = {
+    route: readRoute(), data: window.KBC_DATA || null, fuseReady: false,
+    q: '', f: { ...EMPTY }, sort: 'best', limit: 24,
+    ratings: load('ratings', {}), cart: load('cart', []), prefs: load('prefs', null),
+    hover: null, w: window.innerWidth, sheet: null, menu: false,
+    open: { style: true, abv: true }, qty: {}, dQty: 1, pkgOpen: {}, draft: null, toast: null,
+    form: { name: '', email: '', address: '', slot: 'Friday morning' }, formErr: false, order: null, shopStyle: '',
+  };
+  panelRef = React.createRef(); qRef = React.createRef(); pkgRef = React.createRef(); singlesRef = React.createRef();
+
+  componentDidMount() {
+    this.onHash = () => { this.setState({ route: readRoute(), dQty: 1, sheet: null, menu: false, order: this.state.route.page === 'checkout' ? this.state.order : null }); window.scrollTo(0, 0); };
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onKey = e => { if (e.key === 'Escape' && (this.state.sheet || this.state.menu)) this.setState({ sheet: null, menu: false }); };
+    window.addEventListener('hashchange', this.onHash);
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('keydown', this.onKey);
+    const tick = () => {
+      const d = window.KBC_DATA;
+      if (d && !this.state.data) this.setState({ data: d });
+      if (d && window.Fuse && !this.fuse) {
+        const opts = { includeScore: true, ignoreLocation: true, minMatchCharLength: 2, keys: [{ name: 'name', weight: 3 }, { name: 'brewery', weight: 2 }, { name: 'style', weight: 2 }, { name: 'flavors', weight: 1.5 }, { name: 'keywords', weight: 1 }] };
+        this.fuse = new window.Fuse(d.beers, { ...opts, threshold: 0.38 });
+        this.fuseStrict = new window.Fuse(d.beers, { ...opts, threshold: 0.15 });
+        this.setState({ fuseReady: true });
+      }
+      if (d && this.fuse) clearInterval(this.poll);
+    };
+    this.poll = setInterval(tick, 50); tick();
+    this.pollStop = setTimeout(() => clearInterval(this.poll), 15000);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('hashchange', this.onHash); window.removeEventListener('resize', this.onResize); window.removeEventListener('keydown', this.onKey);
+    clearInterval(this.poll); clearTimeout(this.pollStop); clearTimeout(this.toastT); document.body.style.overflow = '';
+  }
+  componentDidUpdate(pp, ps) {
+    const s = this.state;
+    if (ps.sheet !== s.sheet || ps.menu !== s.menu) {
+      document.body.style.overflow = s.sheet || s.menu ? 'hidden' : '';
+      if (s.sheet && !ps.sheet && this.panelRef.current) this.panelRef.current.focus();
+      if (!s.sheet && ps.sheet && this.lastFocus && document.contains(this.lastFocus)) this.lastFocus.focus();
+    }
+    if (ps.ratings !== s.ratings) save('ratings', s.ratings);
+    if (ps.cart !== s.cart) save('cart', s.cart);
+    if (ps.prefs !== s.prefs) save('prefs', s.prefs);
+  }
+
+  openSheet(name) { this.lastFocus = document.activeElement; this.setState(s => ({ sheet: name, menu: false, draft: name === 'prefs' ? { ...EMPTY_PREFS(), ...(s.prefs || s.data.sampleProfile), sample: false } : s.draft })); }
+  setF(patch) { this.setState(s => ({ f: { ...s.f, ...patch }, limit: 24 })); }
+  toggleIn(key, v) { this.setState(s => { const arr = s.f[key]; return { f: { ...s.f, [key]: arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v] }, limit: 24 }; }); }
+  flash(text) { clearTimeout(this.toastT); this.setState({ toast: text }); this.toastT = setTimeout(() => this.setState({ toast: null }), 3200); }
+  addLine(key, qty, label) {
+    this.setState(s => { const ex = s.cart.find(l => l.key === key); return { cart: ex ? s.cart.map(l => l.key === key ? { ...l, qty: Math.min(99, l.qty + qty) } : l) : [...s.cart, { key, qty }] }; });
+    this.flash(label + ' added to cart');
+  }
+  setLineQty(key, q) { this.setState(s => ({ cart: q <= 0 ? s.cart.filter(l => l.key !== key) : s.cart.map(l => l.key === key ? { ...l, qty: Math.min(99, q) } : l) })); }
+  rate(id, n) { this.setState(s => { const r = { ...s.ratings }; if (r[id] === n) delete r[id]; else r[id] = n; return { ratings: r, hover: null }; }); }
+
+  search(q, beers) {
+    const toks = q.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    const maps = toks.map(t => {
+      const m = new Map();
+      if (this.fuse) (t.length <= 3 ? this.fuseStrict : this.fuse).search(t).forEach(r => m.set(r.item.id, 1 - r.score));
+      else beers.forEach(b => { const v = this.fallback(b, t); if (v) m.set(b.id, v); });
+      return m;
+    });
+    const scores = new Map();
+    beers.forEach(b => { let all = true, sum = 0; maps.forEach(m => { const v = m.get(b.id); if (v == null) all = false; else sum += v; }); if (all) scores.set(b.id, sum); });
+    if (!scores.size) beers.forEach(b => { let sum = 0; maps.forEach(m => { sum += m.get(b.id) || 0; }); if (sum > 0) scores.set(b.id, sum); });
+    const ql = q.toLowerCase().trim();
+    beers.forEach(b => { if (scores.has(b.id) && (b.name.toLowerCase().includes(ql) || b.brewery.toLowerCase().includes(ql))) scores.set(b.id, scores.get(b.id) + 2); });
+    return scores;
+  }
+  fallback(b, t) {
+    const hay = [b.name, b.brewery, b.style, b.flavors.join(' '), b.keywords].join(' ').toLowerCase();
+    if (hay.includes(t)) return 1;
+    for (const w of hay.split(/[^a-zäöü]+/)) {
+      if (w.length < 2) continue;
+      if (t.length >= 4 && w.startsWith(t.slice(0, t.length - 1))) return 0.7;
+      if (Math.abs(w.length - t.length) <= 2 && lev(w, t) <= Math.max(1, Math.floor(t.length / 4))) return 0.6;
+    }
+    return 0;
+  }
+  matches(b, f, ratings) {
+    if (f.styles.length && !f.styles.includes(b.style)) return false;
+    if (f.flavors.length && !f.flavors.every(x => b.flavors.includes(x))) return false;
+    if (f.breweries.length && !f.breweries.includes(b.brewery)) return false;
+    if (f.countries.length && !f.countries.includes(b.country)) return false;
+    if (f.kosher.length && !f.kosher.includes(b.kosher)) return false;
+    if (f.abvMin !== '' && b.abv < +f.abvMin) return false;
+    if (f.abvMax !== '' && b.abv > +f.abvMax) return false;
+    if (f.ibuMin !== '' && b.ibu < +f.ibuMin) return false;
+    if (f.ibuMax !== '' && b.ibu > +f.ibuMax) return false;
+    if (f.minRating && b.rating < f.minRating) return false;
+    const my = ratings[b.id];
+    if (f.mine === 'rated' && !my) return false;
+    if (f.mine === 'unrated' && my) return false;
+    if (f.mine === 'loved' && !(my >= 4)) return false;
+    if (f.season !== 'any' && b.seasonal !== f.season) return false;
+    if (f.inStock && !b.inStock) return false;
+    return true;
+  }
+  recommend(beers, prefs, ratings, n) {
+    const byId = Object.fromEntries(beers.map(b => [b.id, b]));
+    const rated = Object.entries(ratings).map(([id, r]) => ({ b: byId[id], r })).filter(x => x.b);
+    const ibuWord = { mild: 'Mild bitterness', balanced: 'Balanced bitterness', bitter: 'A properly bitter finish' };
+    const scored = beers.filter(b => !ratings[b.id] && b.inStock).map(b => {
+      let s = b.rating * 0.8; const why = [];
+      if (prefs) {
+        if (prefs.styles && prefs.styles.includes(b.style)) { s += 3; why.push([3, 'One of your favorite styles: ' + b.style]); }
+        const fo = b.flavors.filter(x => prefs.flavors && prefs.flavors.includes(x));
+        if (fo.length) { s += 1.2 * fo.length; why.push([1.2 * fo.length + 0.5, fo.join(' and ') + ', the flavors you prefer']); }
+        const band = b.abv < 5 ? 'low' : b.abv < 7 ? 'medium' : 'strong';
+        if (prefs.abv && prefs.abv === band) { s += 1.5; why.push([1.4, b.abv + '% ABV, the strength you prefer']); }
+        const ib = b.ibu < 25 ? 'mild' : b.ibu < 50 ? 'balanced' : 'bitter';
+        if (prefs.ibu && prefs.ibu === ib) { s += 1.5; why.push([1.3, ibuWord[ib] + ', as you like it']); }
+      }
+      rated.forEach(({ b: rb, r }) => {
+        const w = r - 3; if (!w) return;
+        let sim = (rb.style === b.style ? 1.5 : 0) + 0.5 * b.flavors.filter(x => rb.flavors.includes(x)).length + (rb.brewery === b.brewery ? 0.5 : 0);
+        const d = w * sim; s += d;
+        if (d >= 1.5) why.push([d + 2, 'Because you rated ' + rb.name + ' ' + r + ' stars']);
+      });
+      why.sort((a, c) => c[0] - a[0]);
+      return { b, s, reason: why.length ? why[0][1] : 'Highly rated by the community' };
+    }).sort((a, c) => c.s - a.s);
+    const out = [], per = {};
+    for (const x of scored) { if (out.length === n) break; if (per[x.b.style]) continue; out.push(x); per[x.b.style] = (per[x.b.style] || 0) + 1; }
+    for (const x of scored) { if (out.length === n) break; if (!out.includes(x)) out.push(x); }
+    return out;
+  }
+  vm(b, extra) {
+    const s = this.state, my = s.ratings[b.id] || 0, hv = s.hover && s.hover.id === b.id ? s.hover.n : 0, shown = hv || my;
+    return {
+      id: b.id, name: b.name, brewery: b.brewery, style: b.style, meta: b.style + ' · ' + b.abv + '%', abv: b.abv + '%', ibu: b.ibu,
+      price: money(b.price), ratingText: b.rating.toFixed(1), reviewsText: b.reviews.toLocaleString('en-US'),
+      img: b.image, imgLg: b.imageLg, pos: b.imagePos, href: '#/beer/' + b.id, alt: b.name + ', ' + b.style,
+      myLabel: my ? 'Yours' : 'Rate', myLabelLong: my ? 'Your rating' : 'Rate this beer',
+      stars: [1, 2, 3, 4, 5].map(n => ({
+        label: (my === n ? 'Your rating: ' : 'Rate ') + n + ' star' + (n > 1 ? 's' : '') + (my === n ? ' (select again to clear)' : ''),
+        pressed: my === n ? 'true' : 'false', fill: n <= shown ? '#E9B949' : 'none', color: n <= shown ? '#B8862A' : '#9AA5B6',
+        click: e => { e.preventDefault(); e.stopPropagation(); this.rate(b.id, n); },
+        enter: () => { if (!this.state.hover || this.state.hover.id !== b.id || this.state.hover.n !== n) this.setState({ hover: { id: b.id, n } }); },
+      })),
+      leave: () => { if (this.state.hover) this.setState({ hover: null }); },
+      soldOut: !b.inStock, addLabel: b.inStock ? 'Add' : 'Sold out', add: () => this.addLine('b:' + b.id, 1, b.name),
+      availability: b.availability, availShort: b.availability === 'In stock' ? '' : b.availability,
+      availColor: b.availability === 'In stock' ? '#2F6B4F' : '#A63B31',
+      ...extra,
+    };
+  }
+
+  renderVals() {
+    const s = this.state, d = s.data, p = this.props, w = s.w;
+    const navWide = w >= 1060, page = s.route.page;
+    const nav = [['#/explore', 'Explore Beers', ['explore', 'beer']], ['#/shop', 'Shop & Shabbos Packages', ['shop', 'checkout']], ['#/vision', 'Our Vision', ['vision']], ['#/kosher', 'Understanding Kosher Beer', ['kosher']]]
+      .map(([href, label, pg]) => { const cur = pg.includes(page); return { href, label, current: cur ? 'page' : undefined, line: cur ? '#C94B40' : 'transparent', color: cur ? '#C94B40' : '#183153' }; });
+    const cartCount = s.cart.reduce((a, l) => a + l.qty, 0);
+    const base = {
+      nav, navWide, navNarrow: !navWide, searchBtn: w >= 640, menuOpen: s.menu, menuClosed: !s.menu,
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu, sheet: null })),
+      cartCount: cartCount || false, cartAria: 'Cart, ' + plural(cartCount, 'item'),
+      openCart: () => { clearTimeout(this.toastT); this.setState({ toast: null }); this.openSheet('cart'); },
+      photoFilter: p.photoTreatment === 'Black & white' ? 'grayscale(1) contrast(1.08)' : 'none',
+      imgErr: e => { const fb = window.KBC_DATA && window.KBC_DATA.fallbackImage; if (fb && e.target.src !== fb) e.target.src = fb; else e.target.style.visibility = 'hidden'; },
+      qRef: this.qRef, panelRef: this.panelRef, pkgRef: this.pkgRef, singlesRef: this.singlesRef,
+      toast: s.toast, loading: !d,
+    };
+    if (!d) return { ...base, isExplore: false };
+
+    const beers = d.beers, f = s.f, byId = Object.fromEntries(beers.map(b => [b.id, b]));
+    const pkgById = Object.fromEntries(d.packages.map(x => [x.id, x]));
+
+    // ----- explore -----
+    const scores = s.q.trim() ? this.search(s.q, beers) : null;
+    let list = beers.filter(b => (!scores || scores.has(b.id)) && this.matches(b, f, s.ratings));
+    const pop = b => b.rating * Math.log10(b.reviews + 10);
+    const sorters = { best: scores ? (a, b) => scores.get(b.id) - scores.get(a.id) || pop(b) - pop(a) : (a, b) => pop(b) - pop(a), rated: (a, b) => b.rating - a.rating || b.reviews - a.reviews, popular: (a, b) => b.reviews - a.reviews, abvAsc: (a, b) => a.abv - b.abv, abvDesc: (a, b) => b.abv - a.abv, ibuAsc: (a, b) => a.ibu - b.ibu, ibuDesc: (a, b) => b.ibu - a.ibu, alpha: (a, b) => a.name.localeCompare(b.name) };
+    list = list.slice().sort(sorters[s.sort] || sorters.best);
+
+    const ak = abvKey(f.abvMin, f.abvMax), ik = ibuKey(f.ibuMin, f.ibuMax);
+    const rangeLabel = (lo, hi, unit) => lo && hi ? lo + '–' + hi + unit : lo ? lo + unit + '+' : 'Up to ' + hi + unit;
+    const chips = [];
+    f.styles.forEach(v => chips.push({ label: v, remove: () => this.toggleIn('styles', v) }));
+    if (ak) chips.push({ label: 'ABV ' + rangeLabel(f.abvMin, f.abvMax, '%'), remove: () => this.setF({ abvMin: '', abvMax: '' }) });
+    if (ik) chips.push({ label: 'IBU ' + rangeLabel(f.ibuMin, f.ibuMax, ''), remove: () => this.setF({ ibuMin: '', ibuMax: '' }) });
+    f.flavors.forEach(v => chips.push({ label: v, remove: () => this.toggleIn('flavors', v) }));
+    f.breweries.forEach(v => chips.push({ label: v, remove: () => this.toggleIn('breweries', v) }));
+    f.countries.forEach(v => chips.push({ label: v, remove: () => this.toggleIn('countries', v) }));
+    f.kosher.forEach(v => chips.push({ label: v.replace(' (illustrative)', ''), remove: () => this.toggleIn('kosher', v) }));
+    if (f.minRating) chips.push({ label: f.minRating.toFixed(1) + '+ community', remove: () => this.setF({ minRating: 0 }) });
+    const mineL = { rated: 'Rated by me', unrated: 'Not yet rated', loved: 'I rated 4+' };
+    if (f.mine !== 'any') chips.push({ label: mineL[f.mine], remove: () => this.setF({ mine: 'any' }) });
+    if (f.season !== 'any') chips.push({ label: f.season, remove: () => this.setF({ season: 'any' }) });
+    if (f.inStock) chips.push({ label: 'In stock', remove: () => this.setF({ inStock: false }) });
+    const fCount = chips.length;
+    const browsing = !s.q.trim() && !fCount;
+
+    const prefs = s.prefs || d.sampleProfile;
+    const nRec = p.recCount === '4' ? 4 : 3;
+    const recs = this.recommend(beers, prefs, s.ratings, nRec).map(x => this.vm(x.b, { reason: x.reason }));
+    const nRated = Object.keys(s.ratings).length;
+    const recBasis = s.prefs ? (nRated ? 'Based on your preferences and ' + plural(nRated, 'rating') : 'Based on your preferences') : nRated ? 'Based on a sample profile and your ' + plural(nRated, 'rating') : 'Based on a sample profile. Rate beers or set preferences to personalize.';
+
+    const results = list.slice(0, s.limit).map(b => this.vm(b));
+    const grid = w >= 640 && p.desktopLayout !== 'List';
+    const suggestions = ['IPA', 'Lager', 'Stout', 'Wheat beer'].map(t => ({ label: t, go: () => this.setState({ q: t, f: { ...EMPTY }, limit: 24 }) }));
+
+    const allClear = () => this.setState({ f: { ...EMPTY }, limit: 24 });
+    const g = (key, title, summary, chipsArr, extra) => ({ key, title, summary, chips: chipsArr, open: !!s.open[key], chev: s.open[key] ? 'rotate(180deg)' : 'none', toggle: () => this.setState(st => ({ open: { ...st.open, [key]: !st.open[key] } })), note: null, range: null, ...extra });
+    const sumArr = a => a.length ? a.length + ' selected' : '';
+    const numH = key => e => this.setF({ [key]: e.target.value });
+    const groups = [
+      g('style', 'Style', sumArr(f.styles), d.styles.map(v => chip(v, f.styles.includes(v), () => this.toggleIn('styles', v)))),
+      g('abv', 'Alcohol (ABV)', ak ? rangeLabel(f.abvMin, f.abvMax, '%') : '', [['low', 'Light · under 5%'], ['medium', 'Medium · 5–7%'], ['strong', 'Strong · 7%+']].map(([k, l]) => chip(l, ak === k, () => this.setF(ak === k ? { abvMin: '', abvMax: '' } : { abvMin: ABV_P[k][0], abvMax: ABV_P[k][1] }))), { range: { minLabel: 'Min %', maxLabel: 'Max %', min: f.abvMin, max: f.abvMax, minPh: '0', maxPh: '12', step: '0.1', onMin: numH('abvMin'), onMax: numH('abvMax') } }),
+      g('ibu', 'Bitterness (IBU)', ik ? rangeLabel(f.ibuMin, f.ibuMax, '') : '', [['mild', 'Mild · under 25'], ['balanced', 'Balanced · 25–49'], ['bitter', 'Bitter · 50+']].map(([k, l]) => chip(l, ik === k, () => this.setF(ik === k ? { ibuMin: '', ibuMax: '' } : { ibuMin: IBU_P[k][0], ibuMax: IBU_P[k][1] }))), { range: { minLabel: 'Min IBU', maxLabel: 'Max IBU', min: f.ibuMin, max: f.ibuMax, minPh: '0', maxPh: '100', step: '1', onMin: numH('ibuMin'), onMax: numH('ibuMax') } }),
+      g('flavor', 'Flavor', sumArr(f.flavors), d.flavors.map(v => chip(v, f.flavors.includes(v), () => this.toggleIn('flavors', v))), { note: 'Shows beers with all selected flavors.' }),
+      g('rating', 'Community rating', f.minRating ? f.minRating.toFixed(1) + '+' : '', [0, 3.5, 4, 4.5].map(v => chip(v ? v.toFixed(1) + ' and up' : 'Any', f.minRating === v, () => this.setF({ minRating: v })))),
+      g('mine', 'My ratings', f.mine !== 'any' ? mineL[f.mine] : '', [['any', 'Any'], ['rated', 'Rated by me'], ['unrated', 'Not yet rated'], ['loved', 'I rated 4+']].map(([k, l]) => chip(l, f.mine === k, () => this.setF({ mine: k })))),
+      g('brewery', 'Brewery', sumArr(f.breweries), d.breweries.map(v => chip(v, f.breweries.includes(v), () => this.toggleIn('breweries', v)))),
+      g('region', 'Country', sumArr(f.countries), d.countries.map(v => chip(v, f.countries.includes(v), () => this.toggleIn('countries', v)))),
+      g('kosher', 'Kosher status', sumArr(f.kosher), d.kosher.map(v => chip(v.replace(' (illustrative)', ''), f.kosher.includes(v), () => this.toggleIn('kosher', v))), { note: 'Sample data for this demo. Not verified.' }),
+      g('season', 'Seasonal or year-round', f.season !== 'any' ? f.season : '', [['any', 'Any'], ['Year-round', 'Year-round'], ['Seasonal', 'Seasonal']].map(([k, l]) => chip(l, f.season === k, () => this.setF({ season: k })))),
+    ];
+
+    // ----- detail -----
+    let dv = false, similar = [];
+    if (page === 'beer') {
+      const b = byId[s.route.id];
+      if (b) {
+        dv = this.vm(b, { region: b.region, flavors: b.flavors, description: b.description, kosher: b.kosher, kosherNote: b.kosherNote, season: b.seasonal, ibuWord: b.ibu < 25 ? 'mild' : b.ibu < 50 ? 'balanced' : 'bitter' });
+        similar = beers.filter(x => x.id !== b.id).map(x => ({ x, sc: (x.style === b.style ? 3 : 0) + x.flavors.filter(fl => b.flavors.includes(fl)).length + (Math.abs(x.abv - b.abv) < 1 ? 0.5 : 0) + x.rating * 0.2 }))
+          .sort((a, c) => c.sc - a.sc).slice(0, 4).map(o => this.vm(o.x));
+      }
+    }
+
+    // ----- cart -----
+    const cartLines = s.cart.map(l => {
+      const [type, id] = l.key.split(':');
+      let name, sub, img, unit;
+      if (type === 'b') { const b = byId[id]; if (!b) return null; name = b.name; sub = b.brewery; img = b.image; unit = b.price; }
+      else { const pk = pkgById[id]; if (!pk) return null; name = pk.name; sub = 'Package · ' + pk.items.length + ' beers'; img = pk.photos[0]; unit = pk.price; }
+      return { key: l.key, name, sub, img, unitN: unit, unit: money(unit), qty: l.qty, total: money(unit * l.qty), inc: () => this.setLineQty(l.key, l.qty + 1), dec: () => this.setLineQty(l.key, l.qty - 1), remove: () => this.setLineQty(l.key, 0) };
+    }).filter(Boolean);
+    const subtotal = cartLines.reduce((a, l) => a + l.unitN * l.qty, 0);
+    const tax = subtotal * TAX, deliv = subtotal === 0 || subtotal >= FREE_OVER ? 0 : DELIVERY;
+    const totals = { subtotal: money(subtotal), tax: money(tax), delivery: deliv ? money(deliv) : 'Free', deliveryLabel: subtotal >= FREE_OVER ? 'Delivery (demo)' : 'Delivery (demo, free over $' + FREE_OVER + ')', total: money(subtotal + tax + deliv), totalN: subtotal + tax + deliv };
+
+    // ----- shop -----
+    const packages = d.packages.map(pk => {
+      const value = pk.items.reduce((a, id) => a + byId[id].price, 0);
+      const open = !!s.pkgOpen[pk.id];
+      return { id: pk.id, name: pk.name, desc: pk.desc, for: pk.for, count: pk.items.length + ' beers', price: money(pk.price), savings: 'Save ' + money(value - pk.price), p1: pk.photos[0], p2: pk.photos[1], p3: pk.photos[2], open, chev: open ? 'rotate(180deg)' : 'none', insideLabel: open ? "Hide what's inside" : "What's inside",
+        toggle: () => this.setState(st => ({ pkgOpen: { ...st.pkgOpen, [pk.id]: !st.pkgOpen[pk.id] } })),
+        items: pk.items.map(id => ({ name: byId[id].name, meta: byId[id].style + ' · ' + byId[id].abv + '%', href: '#/beer/' + id })),
+        add: () => this.addLine('p:' + pk.id, 1, pk.name) };
+    });
+    const shopList = beers.filter(b => !s.shopStyle || b.style === s.shopStyle).slice().sort((a, b) => (b.inStock - a.inStock) || a.name.localeCompare(b.name));
+    const shopItems = shopList.map(b => { const q = s.qty[b.id] || 1; return this.vm(b, { qty: q, inc: () => this.setState(st => ({ qty: { ...st.qty, [b.id]: Math.min(99, q + 1) } })), dec: () => this.setState(st => ({ qty: { ...st.qty, [b.id]: Math.max(1, q - 1) } })), addQty: () => { this.addLine('b:' + b.id, q, (q > 1 ? q + ' × ' : '') + b.name); this.setState(st => ({ qty: { ...st.qty, [b.id]: 1 } })); }, addLabel: b.inStock ? 'Add to cart' : 'Sold out' }); });
+    const shopWide = w >= 700;
+    const pkgWide = w >= 980, pkgMid = w >= 640;
+
+    // ----- prefs -----
+    const dr = s.draft || EMPTY_PREFS();
+    const setDraft = patch => this.setState(st => ({ draft: { ...st.draft, ...patch } }));
+    const togDraft = (k, v) => setDraft({ [k]: (dr[k] || []).includes(v) ? dr[k].filter(x => x !== v) : [...(dr[k] || []), v] });
+    const prefGroups = [
+      { title: 'Favorite styles', chips: d.styles.filter(x => x !== 'Other').map(v => chip(v, (dr.styles || []).includes(v), () => togDraft('styles', v))) },
+      { title: 'Flavors you enjoy', chips: d.flavors.map(v => chip(v, (dr.flavors || []).includes(v), () => togDraft('flavors', v))) },
+      { title: 'Bitterness', chips: [['', 'No preference'], ['mild', 'Mild'], ['balanced', 'Balanced'], ['bitter', 'Bitter']].map(([k, l]) => chip(l, (dr.ibu || '') === k, () => setDraft({ ibu: k }))) },
+      { title: 'Strength', chips: [['', 'No preference'], ['low', 'Light · under 5%'], ['medium', 'Medium · 5–7%'], ['strong', 'Strong · 7%+']].map(([k, l]) => chip(l, (dr.abv || '') === k, () => setDraft({ abv: k }))) },
+    ];
+
+    // ----- sheet geometry -----
+    const side = w >= 760, sheetOpen = !!s.sheet;
+    const sf = s.form, slots = ['Thursday evening', 'Friday morning', 'Friday midday'].map(v => chip(v, sf.slot === v, () => this.setState(st => ({ form: { ...st.form, slot: v } }))));
+    const setForm = k => e => this.setState({ form: { ...this.state.form, [k]: e.target.value }, formErr: false });
+    const qs = p.photoTreatment;
+
+    return {
+      ...base,
+      isExplore: page === 'explore', isBeer: page === 'beer', isShop: page === 'shop', isVision: page === 'vision', isKosher: page === 'kosher', isCheckout: page === 'checkout',
+      // explore
+      q: s.q, hasQ: !!s.q, placeholder: w < 480 ? 'Beer, brewery, style or flavor' : 'Search by beer, brewery, style or flavor',
+      onQ: e => this.setState({ q: e.target.value, limit: 24, sort: e.target.value && !this.state.q ? 'best' : this.state.sort }),
+      clearQ: () => { this.setState({ q: '' }); this.qRef.current && this.qRef.current.focus(); },
+      submitSearch: e => { e.preventDefault(); if (w < 760 && this.qRef.current) this.qRef.current.blur(); const el = document.getElementById('res-h'); if (el && !browsing) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }); },
+      styles: d.styles,
+      styleSel: f.styles.length === 1 ? f.styles[0] : f.styles.length > 1 ? '__multi' : '', styleSelBd: f.styles.length ? '#183153' : 'rgba(24,49,83,.32)',
+      onStyleSel: e => this.setF({ styles: e.target.value ? [e.target.value] : [] }),
+      abvSel: ak, abvSelBd: ak ? '#183153' : 'rgba(24,49,83,.32)',
+      onAbvSel: e => { const k = e.target.value; this.setF(k ? { abvMin: ABV_P[k][0], abvMax: ABV_P[k][1] } : { abvMin: '', abvMax: '' }); },
+      openFilters: () => this.openSheet('filters'),
+      filterBtnLabel: fCount ? 'Filters · ' + fCount : 'Filters', filterBtnBg: fCount ? '#183153' : 'transparent', filterBtnFg: fCount ? '#FAF9F6' : '#183153',
+      hasChips: fCount > 0, activeChips: chips, clearAll: allClear,
+      clearEverything: () => this.setState({ q: '', f: { ...EMPTY }, limit: 24 }),
+      showRecs: browsing, recs, recBasis, recsGrid: w >= 900, recsRows: w < 900, recCols: nRec,
+      prefsCta: s.prefs ? 'Edit preferences' : 'Set your preferences', openPrefs: () => this.openSheet('prefs'),
+      resultsTitle: browsing ? 'All beers' : scores ? 'Results for “' + s.q.trim() + '”' : 'Filtered beers',
+      countText: plural(list.length, 'beer') + (browsing ? ' in the catalog' : ' found'),
+      sort: s.sort, onSort: e => this.setState({ sort: e.target.value }),
+      noResults: list.length === 0, emptyTitle: scores ? 'No beers match “' + s.q.trim() + '”.' : 'No beers match these filters.', suggestions,
+      results, gridMode: grid, rowMode: !grid, rowImgW: w >= 640 ? '120px' : '96px',
+      hasMore: list.length > s.limit, moreLabel: 'Show more beers (' + (list.length - s.limit) + ' more)', showMore: () => this.setState(st => ({ limit: st.limit + 24 })),
+      // detail
+      d: dv, notFound: page === 'beer' && !dv, similar,
+      detailCols: w >= 860 ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)', detailRatio: w >= 860 ? '4/5' : '1/1',
+      dQty: s.dQty, dInc: () => this.setState(st => ({ dQty: Math.min(99, st.dQty + 1) })), dDec: () => this.setState(st => ({ dQty: Math.max(1, st.dQty - 1) })),
+      dAdd: () => { if (!dv) return; const q = s.dQty; this.addLine('b:' + dv.id, q, (q > 1 ? q + ' × ' : '') + dv.name); this.setState({ dQty: 1 }); },
+      dAddLabel: dv && dv.soldOut ? 'Sold out' : 'Add to cart', dTotal: dv ? money(byId[dv.id].price * s.dQty) : '',
+      simMin: w >= 640 ? '220px' : '100%', simCols: w >= 640 ? '1fr' : '88px minmax(0,1fr)',
+      // shop
+      packages, pkgCols: pkgWide ? 'minmax(0,5fr) minmax(0,5fr) minmax(0,3fr)' : pkgMid ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)',
+      pkgBuyDir: pkgWide ? 'column' : 'row', pkgBuyAlign: pkgWide ? 'stretch' : 'center',
+      jumpPackages: e => { e.preventDefault(); const el = this.pkgRef.current; el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }); },
+      jumpSingles: e => { e.preventDefault(); const el = this.singlesRef.current; el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }); },
+      shopItems, shopCount: plural(shopList.length, 'beer'), shopStyle: s.shopStyle, onShopStyle: e => this.setState({ shopStyle: e.target.value }),
+      shopGrid: shopWide ? 'repeat(auto-fill,minmax(240px,1fr))' : 'minmax(0,1fr)', shopGap: shopWide ? '36px 24px' : '0', shopCardCols: shopWide ? 'minmax(0,1fr)' : '96px minmax(0,1fr)',
+      shopCardPad: shopWide ? '28px 0 0' : '16px 0', shopCardBorder: shopWide ? '0' : '1px solid rgba(24,49,83,.14)',
+      // checkout
+      order: s.order, checkoutEmpty: !s.order && cartLines.length === 0, checkoutForm: !s.order && cartLines.length > 0,
+      form: sf, formErr: s.formErr, onName: setForm('name'), onEmail: setForm('email'), onAddress: setForm('address'), slots,
+      coCols: w >= 820 ? 'minmax(0,3fr) minmax(0,2fr)' : 'minmax(0,1fr)',
+      placeOrder: e => {
+        e.preventDefault();
+        const ok = sf.name.trim() && /\S+@\S+\.\S+/.test(sf.email) && sf.address.trim();
+        if (!ok) return this.setState({ formErr: true });
+        this.setState({ order: { no: 'KBC-' + Math.floor(10000 + Math.random() * 89999), name: sf.name.trim().split(' ')[0], email: sf.email, slot: sf.slot, total: totals.total }, cart: [], formErr: false });
+        window.scrollTo(0, 0);
+      },
+      // pages
+      breweryImage: d.breweryImage, heroImage: d.heroImage, articleCols: w >= 860 ? 'minmax(0,1fr) minmax(0,3fr)' : 'minmax(0,1fr)',
+      // sheets
+      panelOpen: sheetOpen, isFilters: s.sheet === 'filters', isCart: s.sheet === 'cart', isPrefs: s.sheet === 'prefs',
+      panelTitle: s.sheet === 'filters' ? 'Filters' : s.sheet === 'cart' ? 'Your cart' + (cartCount ? ' (' + cartCount + ')' : '') : 'Your preferences',
+      pTop: side ? '0' : '8vh', pLeft: side ? 'auto' : '0', pW: side ? 'min(460px,100%)' : '100%',
+      closeSheet: () => this.setState({ sheet: null }),
+      groups, f, toggleInStock: () => this.setF({ inStock: !f.inStock }),
+      applyLabel: list.length ? 'Show ' + plural(list.length, 'beer') : 'No beers match',
+      cartLines, cartEmpty: cartLines.length === 0, cartHas: cartLines.length > 0, totals,
+      prefGroups,
+      savePrefs: () => { const dd = this.state.draft; this.setState({ prefs: { styles: dd.styles || [], flavors: dd.flavors || [], ibu: dd.ibu || '', abv: dd.abv || '' }, sheet: null }); this.flash('Preferences saved'); },
+      resetPrefs: () => this.setState({ draft: EMPTY_PREFS() }),
+    };
+  }
+}
+function EMPTY_PREFS() { return { styles: [], flavors: [], ibu: '', abv: '' }; }
+</script>
+</body>
+</html>
